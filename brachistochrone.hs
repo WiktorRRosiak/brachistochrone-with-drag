@@ -1,4 +1,4 @@
-﻿import System.IO
+import System.IO
 import Data.List
 import Data.Tuple
 --by zainstalować bibioteki graficzne należy wywołać następujące komendy w terminalu:
@@ -38,7 +38,7 @@ ds x dx args = sqrt ( 1 + (f (pochodna args) x) ** 2 ) * dx
 długość a b dx args = sum $ map (\x -> ds x dx args) [a, a + dx .. b]
 --wszystkie możliwe parabole postaci ax^2 + bx przechodzące przez (0,0) i (a,b)
 możliwe :: Punkt -> Double -> [[Double]]
-możliwe (x,y) dx = [[a,b,0] | a <- [0, 0 + dx .. 2], b <- [(y - a*x**2) / x]]
+możliwe (x,y) dx = [[a,b,0] | a <- [0, 0 + dx .. 0.5], b <- [(y - a*x**2) / x]]
 --rysowanie wszystkich zadanych funkcji
 draw :: (PlotValue y0, PlotValue x0) => [[(x0, y0)]] -> IO ()
 draw funkcje = toFile def "brachistochrona.svg" $ do
@@ -67,13 +67,6 @@ parametry g k args dx v0 a0 t0 (p1:punkty) (kąt:kąty) = [[v, a, t]] ++ paramet
   dv v0 a t = a * t + v0
   da g alfa k v = if alfa >= 0 then g * (sin alfa) - k * v**2 else g * (sin (pi + alfa)) - k * v**2
   dt s v a = if v == 0 then sqrt(2*s / a) else s/v
- 
-
-
-
-
-
-
-
-
-
+czas g k args dx v0 a0 t0 (p1:punkty) (kąt:kąty) = sum $ map (\x -> x!!2) $ parametry g k args dx v0 a0 t0 (p1:punkty) (kąt:kąty)
+wyniki g k dx v0 a0 t0 punkt = zip (map head (możliwe punkt dx)) $ map (\args -> czas g k args dx v0 a0 t0 (funkcja args 0 dx (fst punkt)) (alfy args 0 dx (fst punkt))) $ możliwe punkt dx
+-- chyba nie działa przez dx
